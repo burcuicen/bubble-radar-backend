@@ -1,6 +1,12 @@
 import { ITrendingKeyword } from "../models/trending-keyword";
 import TrendingKeyword from "../models/trending-keyword";
 import { getRedbubbleData } from "./redbubble-service";
+export interface GetAllParams {
+  limit?: number;
+  sortBy?: string;
+  text?: string;
+  skip?: number;
+}
 
 export const createTrendingKeywords = (letter: string): Promise<ITrendingKeyword[]> => {
   const term = letter;
@@ -38,4 +44,23 @@ export const createTrendingKeywords = (letter: string): Promise<ITrendingKeyword
       throw new Error("Error fetching data from Redbubble API");
     });
 };
+
+export async function getAll(params: GetAllParams = {}): Promise<ITrendingKeyword[]> {
+  const { limit = 10, sortBy = "order", text, skip = 0 } = params;
+
+  const query: Record<string, any> = {};
+  if (text) {
+    query.keyword = { $regex: text, $options: "i" };
+  }
+
+  let queryObj = TrendingKeyword.find(query).sort({ [sortBy]: "asc" });
+
+  if (limit > -1) {
+    queryObj = queryObj.skip(skip).limit(limit);
+  }
+
+  const keywords = await queryObj.exec();
+
+  return keywords;
+}
 

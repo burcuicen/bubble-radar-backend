@@ -1,5 +1,5 @@
 import express from "express";
-import { getTrendingKeywords } from "../controllers/trending-controller";
+import { getTrendingKeywords, getAllTrendingKeywords } from "../controllers/trending-controller";
 
 const router = express.Router();
 
@@ -8,6 +8,7 @@ for (let letter of "abcdefghijklmnopqrstuvwxyz".split("")) {
     getTrendingKeywords(req, res, letter);
   });
 }
+router.get("/keywords", getAllTrendingKeywords);
 
 export default router;
 
