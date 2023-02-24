@@ -1,7 +1,12 @@
 import { IPopularSearch } from "../models/popular-search";
 import PopularSearch from "../models/popular-search";
 import { getRedbubbleData } from "./redbubble-service";
-
+export interface GetAllParams {
+  limit?: number;
+  sortBy?: string;
+  text?: string;
+  skip?: number;
+}
 export const createPopularSearches = (url: string): Promise<IPopularSearch[]> => {
   return getRedbubbleData(url)
     .then((data) => {
@@ -34,4 +39,21 @@ export const createPopularSearches = (url: string): Promise<IPopularSearch[]> =>
       throw new Error("Error fetching data from Redbubble API");
     });
 };
+export async function getAll(params: GetAllParams = {}): Promise<IPopularSearch[]> {
+  const { limit = 10, sortBy = "order", text, skip = 0 } = params;
+
+  const query: Record<string, any> = {};
+  if (text) {
+    query.keyword = { $regex: text, $options: "i" };
+  }
+
+  let queryObj = PopularSearch.find(query).sort({ [sortBy]: "asc" });
+
+  if (limit > -1) {
+    queryObj = queryObj.skip(skip).limit(limit);
+  }
+  const keywords = await queryObj.exec();
+
+  return keywords;
+}
 

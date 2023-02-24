@@ -6,6 +6,7 @@ export interface GetAllParams {
   sortBy?: string;
   text?: string;
   skip?: number;
+  term?: string;
 }
 
 export const createTrendingKeywords = (letter: string): Promise<ITrendingKeyword[]> => {
@@ -46,7 +47,7 @@ export const createTrendingKeywords = (letter: string): Promise<ITrendingKeyword
 };
 
 export async function getAll(params: GetAllParams = {}): Promise<ITrendingKeyword[]> {
-  const { limit = 10, sortBy = "order", text, skip = 0 } = params;
+  const { limit = 10, sortBy = "order", text, skip = 0, term } = params;
 
   const query: Record<string, any> = {};
   if (text) {
@@ -57,6 +58,9 @@ export async function getAll(params: GetAllParams = {}): Promise<ITrendingKeywor
 
   if (limit > -1) {
     queryObj = queryObj.skip(skip).limit(limit);
+  }
+  if (term) {
+    queryObj = queryObj.where("term").equals(term);
   }
 
   const keywords = await queryObj.exec();
