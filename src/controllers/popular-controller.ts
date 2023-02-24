@@ -12,10 +12,12 @@ export const getPopularSearches = (req: Request, res: Response): void => {
   createPopularSearches(url)
     .then((popularSearches) => {
       console.log(`Saved ${popularSearches.length} popular searches to the database`);
+      res.setHeader("Access-Control-Allow-Origin", "*");
       res.json(popularSearches);
     })
     .catch((error) => {
       console.error(error);
+      res.setHeader("Access-Control-Allow-Origin", "*");
       res.status(500).send("Error fetching data from Redbubble API");
     });
 };
@@ -31,9 +33,11 @@ export async function getAllPopularSearches(req: Request, res: Response): Promis
     };
 
     const keywords = await getAll(params);
+    res.setHeader("Access-Control-Allow-Origin", "*");
     res.json(keywords);
   } catch (error) {
     console.error(error);
+    res.setHeader("Access-Control-Allow-Origin", "*");
     res.status(500).send("Error fetching trending keywords");
   }
 }

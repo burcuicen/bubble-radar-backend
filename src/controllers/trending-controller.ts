@@ -8,10 +8,14 @@ export const getTrendingKeywords = (req: Request, res: Response, letter: string)
   keywords
     .then((savedKeywords) => {
       console.log(`Saved ${savedKeywords.length} trending keywords for term '${term}'`);
+      res.setHeader("Access-Control-Allow-Origin", "*");
+
       res.json(savedKeywords);
     })
     .catch((error) => {
       console.error(error);
+      res.setHeader("Access-Control-Allow-Origin", "*");
+
       res.status(500).send("Error saving trending keywords to the database");
     });
 };
@@ -28,9 +32,12 @@ export async function getAllTrendingKeywords(req: Request, res: Response): Promi
     };
 
     const keywords = await getAll(params);
+    res.setHeader("Access-Control-Allow-Origin", "*");
+
     res.json(keywords);
   } catch (error) {
     console.error(error);
+    res.setHeader("Access-Control-Allow-Origin", "*");
     res.status(500).send("Error fetching trending keywords");
   }
 }
