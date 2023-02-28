@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import trendingRouter from "./routes/trending-routes";
 import popularRouter from "./routes/popular-routes";
+import nicheSearchRouter from "./routes/niche-search-routes";
 import cors from "cors";
 
 dotenv.config();
@@ -35,6 +36,7 @@ if (mongodbUri) {
 
 app.use("/trending", trendingRouter);
 app.use("/popular", popularRouter);
+app.use("/my-niche-search", nicheSearchRouter);
 
 app.listen(process.env.PORT || 3000, () => {
   console.log("Server is running");
