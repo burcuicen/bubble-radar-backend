@@ -6,11 +6,11 @@ export const getTrendingKeywords = (req: Request, res: Response, letter: string)
   const keywords = createTrendingKeywords(term);
 
   keywords
-    .then((savedKeywords) => {
-      console.log(`Saved ${savedKeywords.length} trending keywords for term '${term}'`);
+    .then((keywords) => {
+      console.log(`Saved ${keywords.length} trending keywords for term '${term}'`);
       res.setHeader("Access-Control-Allow-Origin", "*");
-
-      res.json(savedKeywords);
+      console.log(keywords, "controller");
+      res.json(keywords);
     })
     .catch((error) => {
       console.error(error);

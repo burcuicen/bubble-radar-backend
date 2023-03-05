@@ -9,41 +9,37 @@ export interface GetAllParams {
   term?: string;
 }
 
-export const createTrendingKeywords = (letter: string): Promise<ITrendingKeyword[]> => {
+export const createTrendingKeywords = async (letter: string): Promise<ITrendingKeyword[]> => {
   const term = letter;
   const url = `https://www.redbubble.com/typeahead/?locale=en&term=${term}&limit=-1`;
 
-  return getRedbubbleData(url)
-    .then((data) => {
-      const trendingSearches = JSON.parse(data).data.trending_searches;
+  const data = await getRedbubbleData(url);
+  const trendingSearches = JSON.parse(data).data.trending_searches;
 
-      const savedKeywords: ITrendingKeyword[] = [];
+  const savedKeywords: ITrendingKeyword[] = [];
 
-      // Save the trending searches to the database
-      for (let i = 0; i < trendingSearches.length; i++) {
-        const keyword = trendingSearches[i].label;
-        const order = i + 1;
+  // Save the trending searches to the database
+  await Promise.all(
+    trendingSearches.map(async (search: any, i: number) => {
+      const keyword = search.label;
+      const order = i + 1;
 
-        // Check if the keyword already exists in the database
-        TrendingKeyword.findOne({ term, keyword }, (err: any, doc: any) => {
-          if (doc) console.log(doc.keyword, "already exists. Skipping...");
-          if (err) {
-            console.error(err);
-          } else if (!doc) {
-            const trendingKeyword = new TrendingKeyword({ term, keyword, order });
-            trendingKeyword.save();
-            savedKeywords.push(trendingKeyword);
-            console.log(`Saved to database: ${keyword} (order ${order})`);
-          }
-        });
+      // Check if the keyword already exists in the database
+      const existingKeyword = await TrendingKeyword.findOne({ term, keyword });
+
+      if (existingKeyword) {
+        console.log(`${existingKeyword.keyword} already exists. Skipping...`);
+      } else {
+        const trendingKeyword = new TrendingKeyword({ term, keyword, order });
+        await trendingKeyword.save();
+        savedKeywords.push(trendingKeyword);
+        console.log(`Saved to database: ${keyword} (order ${order})`);
       }
-
-      return savedKeywords;
     })
-    .catch((error) => {
-      console.error(error);
-      throw new Error("Error fetching data from Redbubble API");
-    });
+  );
+
+  console.log(savedKeywords);
+  return savedKeywords;
 };
 
 export async function getAll(params: GetAllParams = {}): Promise<ITrendingKeyword[]> {
