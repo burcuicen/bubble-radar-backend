@@ -1,6 +1,12 @@
 import mongoose from "mongoose";
 import { Document } from "mongoose";
-
+export type IToDoStatus = "to-do" | "in-progress" | "done";
+export interface ToDo {
+  status: IToDoStatus;
+  title: string;
+  details: string;
+  estimatedTime: number;
+}
 export interface IMyNicheSearch extends Document {
   trendingKeywords: string[];
   createdDate: Date;
@@ -8,6 +14,8 @@ export interface IMyNicheSearch extends Document {
   tags: string[];
   niche: string;
   plannedUploadCount: number;
+  note?: string;
+  toDoList?: ToDo[];
 }
 const myNicheSearchSchema = new mongoose.Schema({
   trendingKeywords: {
@@ -29,6 +37,14 @@ const myNicheSearchSchema = new mongoose.Schema({
   plannedUploadCount: {
     type: Number,
     default: 0,
+  },
+  note: {
+    type: String,
+    default: "",
+  },
+  toDoList: {
+    type: [] as ToDo[],
+    default: [],
   },
 });
 
