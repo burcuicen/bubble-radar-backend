@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { createTrendingKeywords, getAll, GetAllParams } from "../services/trending-service";
+import { createTrendingKeywords, getAll, GetAllParams, populateDatabase } from "../services/trending-service";
 
 export const getTrendingKeywords = (req: Request, res: Response, letter: string) => {
   const term = letter;
@@ -39,6 +39,18 @@ export async function getAllTrendingKeywords(req: Request, res: Response): Promi
     console.error(error);
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.status(500).send("Error fetching trending keywords");
+  }
+}
+export async function populateDatabaseController(req: Request, res: Response): Promise<void> {
+  try {
+    await populateDatabase();
+
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.status(200).send("Successfully populated the database with trending keywords");
+  } catch (error) {
+    console.error(error);
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.status(500).send("Error populating the database with trending keywords");
   }
 }
 

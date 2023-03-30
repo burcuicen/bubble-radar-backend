@@ -1,5 +1,5 @@
 import express from "express";
-import { getTrendingKeywords, getAllTrendingKeywords } from "../controllers/trending-controller";
+import { getTrendingKeywords, getAllTrendingKeywords, populateDatabaseController } from "../controllers/trending-controller";
 
 const router = express.Router();
 
@@ -9,6 +9,8 @@ for (let letter of "abcdefghijklmnopqrstuvwxyz".split("")) {
   });
 }
 router.get("/keywords", getAllTrendingKeywords);
+
+router.get("/populate", populateDatabaseController);
 
 export default router;
 
