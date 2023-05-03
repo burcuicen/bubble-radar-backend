@@ -13,7 +13,8 @@ export const createPopularSearches = (url: string): Promise<IPopularSearch[]> =>
       const trendingSearches = JSON.parse(data).data.trending_searches;
 
       const popularSearches: IPopularSearch[] = [];
-
+      //drop the collection
+      PopularSearch.collection.drop();
       // Save the popular searches to the database
       for (let i = 0; i < trendingSearches.length; i++) {
         const keyword = trendingSearches[i].label;
